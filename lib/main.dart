@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/login/login_bloc.dart';
 import 'bloc/product/create_product/create_product_bloc.dart';
 import 'bloc/product/get_all_product/get_all_product_bloc.dart';
-import 'bloc/profile/profile_bloc.dart';
-import 'bloc/register/register_bloc.dart';
+import 'bloc/user/login/login_bloc.dart';
+import 'bloc/user/profile/profile_bloc.dart';
+import 'bloc/user/register/register_bloc.dart';
 import 'data/datasources/auth_datasources.dart';
 import 'data/datasources/product_datasources.dart';
 import 'presentation/pages/login_page.dart';

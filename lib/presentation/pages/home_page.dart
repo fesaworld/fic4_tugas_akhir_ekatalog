@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/product/create_product/create_product_bloc.dart';
 import '../../bloc/product/get_all_product/get_all_product_bloc.dart';
-import '../../bloc/profile/profile_bloc.dart';
+import '../../bloc/user/profile/profile_bloc.dart';
 import '../../data/localsources/auth_local_storage.dart';
 import '../../data/models/request/product_model.dart';
 import 'login_page.dart';
