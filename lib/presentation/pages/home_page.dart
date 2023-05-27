@@ -36,10 +36,12 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               onPressed: () async {
                 await AuthLocalStorage().removeToken();
+
                 // ignore: use_build_context_synchronously
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (context) {
                   return const LoginPage();
-                }));
+                }), (route) => false);
               },
               icon: const Icon(Icons.logout_outlined))
         ],
