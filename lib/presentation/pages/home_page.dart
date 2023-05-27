@@ -77,27 +77,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-            if (state is ProfileLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is ProfileLoaded) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.profile.name ?? ''),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(state.profile.email ?? ''),
-                ],
-              );
-            }
-
-            return const Text('no data');
-          }),
           Expanded(child: BlocBuilder<GetAllProductBloc, GetAllProductState>(
             builder: (context, state) {
               if (state is GetAllProductLoading) {
