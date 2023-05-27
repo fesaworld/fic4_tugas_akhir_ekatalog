@@ -20,10 +20,12 @@ class _HomePageState extends State<HomePage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   TextEditingController titleUpdateController = TextEditingController();
   TextEditingController descriptionUpdateController = TextEditingController();
   TextEditingController priceUpdateController = TextEditingController();
+  final formUpdateKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -33,34 +35,73 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    formKey.currentState?.dispose();
+    formUpdateKey.currentState?.dispose();
+  }
+
+  String? validateTitle(String title) {
+    if (title.isEmpty) {
+      return "Title cannot be empty";
+    }
+    return null;
+  }
+
+  String? validatePrice(String price) {
+    if (price.isEmpty) {
+      return "Price cannot be empty";
+    } else if (price == '0') {
+      return "Price minimum 1";
+    }
+    return null;
+  }
+
+  String? validateDescription(String desc) {
+    if (desc.isEmpty) {
+      return "Description cannot be empty";
+    }
+    return null;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.orange.shade50,
       appBar: AppBar(
         elevation: 0,
-
         backgroundColor: Colors.orange.shade50,
         toolbarHeight: 70,
-        title: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is ProfileLoaded) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10,),
-                  Text('Welcome, ${state.profile.name}', style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w700),),
-                  Text(state.profile.email ?? '', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),)
-                ],
-              );
-            }
-            return Container();
+        title:
+            BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+          if (state is ProfileLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
-        ),
+          if (state is ProfileLoaded) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Welcome, ${state.profile.name}',
+                  style: const TextStyle(
+                      fontSize: 25, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  state.profile.email ?? '',
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w400),
+                )
+              ],
+            );
+          }
+          return Container();
+        }),
         actions: [
           IconButton(
               onPressed: () async {
@@ -87,11 +128,12 @@ class _HomePageState extends State<HomePage> {
               if (state is GetALlProductLoaded) {
                 return ListView.builder(
                     itemCount: state.listProduct.length,
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                     itemBuilder: ((context, index) {
                       final product =
                           state.listProduct.reversed.toList()[index];
                       return InkWell(
-                        onTap: (){
+                        onTap: () {
                           showDialog(
                               context: context,
                               builder: (context) {
@@ -104,11 +146,16 @@ class _HomePageState extends State<HomePage> {
                               });
                         },
                         child: Card(
+                          elevation: 2,
+                          shadowColor: Colors.grey,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 7),
                           child: ListTile(
-                            leading:
-                                CircleAvatar(child: Text('${product.price}')),
+                            leading: CircleAvatar(
+                                radius: 25, child: Text('${product.id}')),
                             title: Text(product.title ?? '-'),
                             subtitle: Text(product.description ?? '-'),
+                            trailing: Text('Rp.${product.price}'),
                           ),
                         ),
                       );
@@ -119,6 +166,7 @@ class _HomePageState extends State<HomePage> {
           ))
         ],
       ),
+      resizeToAvoidBottomInset: true,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -126,32 +174,64 @@ class _HomePageState extends State<HomePage> {
               builder: (context) {
                 return AlertDialog(
                   title: const Text('Add Product'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        decoration: const InputDecoration(labelText: 'Title'),
-                        controller: titleController,
-                      ),
-                      TextField(
-                        decoration: const InputDecoration(labelText: 'Price'),
-                        controller: priceController,
-                        keyboardType: TextInputType.number,
-                      ),
-                      TextField(
-                        maxLines: 3,
-                        decoration:
-                            const InputDecoration(labelText: 'Description'),
-                        controller: descriptionController,
-                      ),
-                    ],
+                  content: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          validator: (title) => validateTitle(title!),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              hintText: 'Insert title..',
+                              hintStyle: TextStyle(
+                                  color: Colors.black.withOpacity(0.3))),
+                          controller: titleController,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextFormField(
+                          validator: (price) => validatePrice(price!),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              hintText: 'Insert price..',
+                              hintStyle: TextStyle(
+                                  color: Colors.black.withOpacity(0.3))),
+                          controller: priceController,
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextFormField(
+                          maxLines: 3,
+                          validator: (desc) => validateDescription(desc!),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              hintText: 'Insert description..',
+                              hintStyle: TextStyle(
+                                  color: Colors.black.withOpacity(0.3))),
+                          controller: descriptionController,
+                        ),
+                      ],
+                    ),
                   ),
                   actions: [
                     ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.red)),
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Cancel'),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     const SizedBox(
                       width: 4,
@@ -160,8 +240,8 @@ class _HomePageState extends State<HomePage> {
                       listener: (context, state) {
                         if (state is CreateProductLoaded) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content:
-                                  Text('Create: ${state.productResponseModel.id}')));
+                              content: Text(
+                                  'Create: ${state.productResponseModel.id}')));
                           Navigator.pop(context);
                           context
                               .read<GetAllProductBloc>()
@@ -176,21 +256,24 @@ class _HomePageState extends State<HomePage> {
                             );
                           }
                           return ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.green)),
                             onPressed: () {
-                              final productModel = ProductModel(
-                                title: titleController.text,
-                                price: int.parse(priceController.text),
-                                description: descriptionController.text,
-                              );
-                              context.read<CreateProductBloc>().add(
-                                  DoCreateProductEvent(
-                                      productModel: productModel));
+                              if (formKey.currentState!.validate()) {
+                                final productModel = ProductModel(
+                                  title: titleController.text,
+                                  price: int.parse(priceController.text),
+                                  description: descriptionController.text,
+                                );
 
-                              // context
-                              //     .read<GetAllProductBloc>()
-                              //     .add(DoGetAllProductEvent());
+                                context.read<CreateProductBloc>().add(
+                                    DoCreateProductEvent(
+                                        productModel: productModel));
+                              }
                             },
-                            child: const Text('Save'),
+                            child: const Text('Save',
+                                style: TextStyle(color: Colors.white)),
                           );
                         },
                       ),
@@ -204,39 +287,76 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildUpdateProduct({required int id, required String title, required int price, required String description}) {
+  Widget _buildUpdateProduct(
+      {required int id,
+      required String title,
+      required int price,
+      required String description,
+     }) {
     titleUpdateController.text = title;
     priceUpdateController.text = price.toString();
     descriptionUpdateController.text = description;
 
     return AlertDialog(
       title: const Text('Edit Product'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            decoration: const InputDecoration(labelText: 'Title'),
-            controller: titleUpdateController,
-          ),
-          TextField(
-            decoration: const InputDecoration(labelText: 'Price'),
-            controller: priceUpdateController,
-            keyboardType: TextInputType.number,
-          ),
-          TextField(
-            maxLines: 3,
-            decoration:
-            const InputDecoration(labelText: 'Description'),
-            controller: descriptionUpdateController,
-          ),
-        ],
+      content: Form(
+        key: formUpdateKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              validator: (title) => validateTitle(title!),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  hintText: 'Insert title..',
+                  hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(0.3))),
+              controller: titleUpdateController,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            TextFormField(
+              validator: (price) => validatePrice(price!),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  hintText: 'Insert price..',
+                  hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(0.3))),
+              controller: priceUpdateController,
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            TextFormField(
+              maxLines: 3,
+              validator: (desc) => validateDescription(desc!),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  hintText: 'Insert description..',
+                  hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(0.3))),
+              controller: descriptionUpdateController,
+            ),
+          ],
+        ),
       ),
       actions: [
         ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor:
+              MaterialStateProperty.all(Colors.red)),
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         const SizedBox(
           width: 4,
@@ -245,13 +365,9 @@ class _HomePageState extends State<HomePage> {
           listener: (context, state) {
             if (state is UpdateProductLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content:
-              Text('Update: ${state.productResponseModel.id}')));
+                  content: Text('Update: ${state.productResponseModel.id}')));
               Navigator.pop(context);
-              context
-                  .read<GetAllProductBloc>()
-                  .add(DoGetAllProductEvent()
-              );
+              context.read<GetAllProductBloc>().add(DoGetAllProductEvent());
             }
           },
           child: BlocBuilder<UpdateProductBloc, UpdateProductState>(
@@ -262,19 +378,23 @@ class _HomePageState extends State<HomePage> {
                 );
               }
               return ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                    MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
-                  final productModel = ProductModel(
-                    title: titleUpdateController.text,
-                    price: int.parse(priceUpdateController.text),
-                    description: descriptionUpdateController.text,
-                  );
-                  context.read<UpdateProductBloc>().add(
-                    DoUpdateProductEvent(
-                        productModel: productModel,
-                        id: id)
-                  );
+                  if (formUpdateKey.currentState!.validate()) {
+                    final productModel = ProductModel(
+                      title: titleUpdateController.text,
+                      price: int.parse(priceUpdateController.text),
+                      description: descriptionUpdateController.text,
+                    );
+
+                    context.read<UpdateProductBloc>().add(
+                        DoUpdateProductEvent(productModel: productModel, id: id));
+                  }
                 },
-                child: const Text('Save'),
+                child: const Text('Save',
+                    style: TextStyle(color: Colors.white)),
               );
             },
           ),
