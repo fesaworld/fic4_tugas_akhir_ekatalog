@@ -30,8 +30,32 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.orange.shade50,
       appBar: AppBar(
-        title: const Text('Home - Profile'),
+        elevation: 0,
+
+        backgroundColor: Colors.orange.shade50,
+        toolbarHeight: 70,
+        title: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is ProfileLoaded) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10,),
+                  Text('Welcome, ${state.profile.name}', style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w700),),
+                  Text(state.profile.email ?? '', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),)
+                ],
+              );
+            }
+            return Container();
+          }
+        ),
         actions: [
           IconButton(
               onPressed: () async {
@@ -46,56 +70,46 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.logout_outlined))
         ],
       ),
-      body: Column(
-        children: [
-          BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-            if (state is ProfileLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is ProfileLoaded) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.profile.name ?? ''),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(state.profile.email ?? ''),
-                ],
-              );
-            }
-
-            return const Text('no data');
-          }),
-          Expanded(child: BlocBuilder<GetAllProductBloc, GetAllProductState>(
-            builder: (context, state) {
-              if (state is GetAllProductLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (state is GetALlProductLoaded) {
-                return ListView.builder(
-                    itemCount: state.listProduct.length,
-                    itemBuilder: ((context, index) {
-                      final product =
-                          state.listProduct.reversed.toList()[index];
-                      return Card(
-                        child: ListTile(
-                          leading:
-                              CircleAvatar(child: Text('${product.price}')),
-                          title: Text(product.title ?? '-'),
-                          subtitle: Text(product.description ?? '-'),
-                        ),
-                      );
-                    }));
-              }
-              return const Text('no data');
-            },
-          ))
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            BlocBuilder<GetAllProductBloc, GetAllProductState>(
+              builder: (context, state) {
+                if (state is GetAllProductLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is GetALlProductLoaded) {
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: state.listProduct.length,
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      itemBuilder: ((context, index) {
+                        final product =
+                            state.listProduct.reversed.toList()[index];
+                        return Card(
+                          elevation: 2,
+                          shadowColor: Colors.grey,
+                          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 25,
+                              child: Text('${product.id}')
+                            ),
+                            title: Text(product.title ?? '-'),
+                            subtitle: Text(product.description ?? '-'),
+                            trailing: Text('Rp.${product.price}'),
+                          ),
+                        );
+                      }));
+                }
+                return const Text('no data');
+              },
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
