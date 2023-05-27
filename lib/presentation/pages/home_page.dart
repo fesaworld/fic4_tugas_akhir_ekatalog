@@ -35,8 +35,32 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.orange.shade50,
       appBar: AppBar(
-        title: const Text('Home - Profile'),
+        elevation: 0,
+
+        backgroundColor: Colors.orange.shade50,
+        toolbarHeight: 70,
+        title: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is ProfileLoaded) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10,),
+                  Text('Welcome, ${state.profile.name}', style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w700),),
+                  Text(state.profile.email ?? '', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),)
+                ],
+              );
+            }
+            return Container();
+          }
+        ),
         actions: [
           IconButton(
               onPressed: () async {
