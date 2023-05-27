@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../data/datasources/auth_datasources.dart';
-import '../../data/models/response/profile_response_model.dart';
+import '../../../data/datasources/auth_datasources.dart';
+import '../../../data/models/response/profile_response_model.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
