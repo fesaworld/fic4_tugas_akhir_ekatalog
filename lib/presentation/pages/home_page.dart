@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/product/create_product/create_product_bloc.dart';
 import '../../bloc/product/get_all_product/get_all_product_bloc.dart';
-import '../../bloc/profile/profile_bloc.dart';
+import '../../bloc/product/update_product/update_product_bloc.dart';
+import '../../bloc/user/profile/profile_bloc.dart';
 import '../../data/localsources/auth_local_storage.dart';
 import '../../data/models/request/product_model.dart';
 import 'login_page.dart';
@@ -19,6 +20,10 @@ class _HomePageState extends State<HomePage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+
+  TextEditingController titleUpdateController = TextEditingController();
+  TextEditingController descriptionUpdateController = TextEditingController();
+  TextEditingController priceUpdateController = TextEditingController();
 
   @override
   void initState() {
@@ -70,46 +75,70 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.logout_outlined))
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            BlocBuilder<GetAllProductBloc, GetAllProductState>(
-              builder: (context, state) {
-                if (state is GetAllProductLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (state is GetALlProductLoaded) {
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: state.listProduct.length,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      itemBuilder: ((context, index) {
-                        final product =
-                            state.listProduct.reversed.toList()[index];
-                        return Card(
-                          elevation: 2,
-                          shadowColor: Colors.grey,
-                          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+      body: Column(
+        children: [
+          BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is ProfileLoaded) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(state.profile.name ?? ''),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Text(state.profile.email ?? ''),
+                ],
+              );
+            }
+
+            return const Text('no data');
+          }),
+          Expanded(child: BlocBuilder<GetAllProductBloc, GetAllProductState>(
+            builder: (context, state) {
+              if (state is GetAllProductLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is GetALlProductLoaded) {
+                return ListView.builder(
+                    itemCount: state.listProduct.length,
+                    itemBuilder: ((context, index) {
+                      final product =
+                          state.listProduct.reversed.toList()[index];
+                      return InkWell(
+                        onTap: (){
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return _buildUpdateProduct(
+                                  id: product.id!,
+                                  title: product.title ?? '',
+                                  price: product.price!,
+                                  description: product.description ?? '',
+                                );
+                              });
+                        },
+                        child: Card(
                           child: ListTile(
-                            leading: CircleAvatar(
-                              radius: 25,
-                              child: Text('${product.id}')
-                            ),
+                            leading:
+                                CircleAvatar(child: Text('${product.price}')),
                             title: Text(product.title ?? '-'),
                             subtitle: Text(product.description ?? '-'),
-                            trailing: Text('Rp.${product.price}'),
                           ),
-                        );
-                      }));
-                }
-                return const Text('no data');
-              },
-            )
-          ],
-        ),
+                        ),
+                      );
+                    }));
+              }
+              return const Text('no data');
+            },
+          ))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -153,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                         if (state is CreateProductLoaded) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
-                                  Text('${state.productResponseModel.id}')));
+                                  Text('Create: ${state.productResponseModel.id}')));
                           Navigator.pop(context);
                           context
                               .read<GetAllProductBloc>()
@@ -193,6 +222,85 @@ class _HomePageState extends State<HomePage> {
         },
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget _buildUpdateProduct({required int id, required String title, required int price, required String description}) {
+    titleUpdateController.text = title;
+    priceUpdateController.text = price.toString();
+    descriptionUpdateController.text = description;
+
+    return AlertDialog(
+      title: const Text('Edit Product'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            decoration: const InputDecoration(labelText: 'Title'),
+            controller: titleUpdateController,
+          ),
+          TextField(
+            decoration: const InputDecoration(labelText: 'Price'),
+            controller: priceUpdateController,
+            keyboardType: TextInputType.number,
+          ),
+          TextField(
+            maxLines: 3,
+            decoration:
+            const InputDecoration(labelText: 'Description'),
+            controller: descriptionUpdateController,
+          ),
+        ],
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        BlocListener<UpdateProductBloc, UpdateProductState>(
+          listener: (context, state) {
+            if (state is UpdateProductLoaded) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content:
+              Text('Update: ${state.productResponseModel.id}')));
+              Navigator.pop(context);
+              context
+                  .read<GetAllProductBloc>()
+                  .add(DoGetAllProductEvent()
+              );
+            }
+          },
+          child: BlocBuilder<UpdateProductBloc, UpdateProductState>(
+            builder: (context, state) {
+              if (state is UpdateProductLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return ElevatedButton(
+                onPressed: () {
+                  final productModel = ProductModel(
+                    title: titleUpdateController.text,
+                    price: int.parse(priceUpdateController.text),
+                    description: descriptionUpdateController.text,
+                  );
+                  context.read<UpdateProductBloc>().add(
+                    DoUpdateProductEvent(
+                        productModel: productModel,
+                        id: id)
+                  );
+                },
+                child: const Text('Save'),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/register/register_bloc.dart';
+import '../../bloc/user/register/register_bloc.dart';
 import '../../data/models/request/register_model.dart';
 import 'login_page.dart';
 

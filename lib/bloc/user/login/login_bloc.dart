@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../data/datasources/auth_datasources.dart';
-import '../../data/localsources/auth_local_storage.dart';
-import '../../data/models/request/login_model.dart';
-import '../../data/models/response/login_response_model.dart';
-
+import '../../../data/datasources/auth_datasources.dart';
+import '../../../data/localsources/auth_local_storage.dart';
+import '../../../data/models/request/login_model.dart';
+import '../../../data/models/response/login_response_model.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';

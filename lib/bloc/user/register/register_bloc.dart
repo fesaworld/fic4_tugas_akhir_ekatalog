@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../data/datasources/auth_datasources.dart';
-import '../../data/models/request/register_model.dart';
-import '../../data/models/response/register_response_model.dart';
+import '../../../data/datasources/auth_datasources.dart';
+import '../../../data/models/request/register_model.dart';
+import '../../../data/models/response/register_response_model.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';
