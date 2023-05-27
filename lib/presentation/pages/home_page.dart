@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.orange.shade50,
       appBar: AppBar(
         elevation: 0,
-
         backgroundColor: Colors.orange.shade50,
         toolbarHeight: 70,
         title: BlocBuilder<ProfileBloc, ProfileState>(
@@ -87,6 +86,7 @@ class _HomePageState extends State<HomePage> {
               if (state is GetALlProductLoaded) {
                 return ListView.builder(
                     itemCount: state.listProduct.length,
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                     itemBuilder: ((context, index) {
                       final product =
                           state.listProduct.reversed.toList()[index];
@@ -104,11 +104,18 @@ class _HomePageState extends State<HomePage> {
                               });
                         },
                         child: Card(
+                          elevation: 2,
+                          shadowColor: Colors.grey,
+                          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
                           child: ListTile(
                             leading:
-                                CircleAvatar(child: Text('${product.price}')),
+                                CircleAvatar(
+                                    radius: 25,
+                                    child: Text('${product.id}')
+                                ),
                             title: Text(product.title ?? '-'),
                             subtitle: Text(product.description ?? '-'),
+                            trailing: Text('Rp.${product.price}'),
                           ),
                         ),
                       );
