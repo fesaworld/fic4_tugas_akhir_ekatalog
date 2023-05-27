@@ -20,6 +20,10 @@ class _HomePageState extends State<HomePage> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
 
+  TextEditingController titleUpdateController = TextEditingController();
+  TextEditingController descriptionUpdateController = TextEditingController();
+  TextEditingController priceUpdateController = TextEditingController();
+
   @override
   void initState() {
     context.read<ProfileBloc>().add(GetProfileEvent());
@@ -82,12 +86,26 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: ((context, index) {
                       final product =
                           state.listProduct.reversed.toList()[index];
-                      return Card(
-                        child: ListTile(
-                          leading:
-                              CircleAvatar(child: Text('${product.price}')),
-                          title: Text(product.title ?? '-'),
-                          subtitle: Text(product.description ?? '-'),
+                      return InkWell(
+                        onTap: (){
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return _buildUpdateProduct(
+                                  id: product.id!,
+                                  title: product.title ?? '',
+                                  price: product.price!,
+                                  description: product.description ?? '',
+                                );
+                              });
+                        },
+                        child: Card(
+                          child: ListTile(
+                            leading:
+                                CircleAvatar(child: Text('${product.price}')),
+                            title: Text(product.title ?? '-'),
+                            subtitle: Text(product.description ?? '-'),
+                          ),
                         ),
                       );
                     }));
@@ -179,6 +197,53 @@ class _HomePageState extends State<HomePage> {
         },
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget _buildUpdateProduct({required int id, required String title, required int price, required String description}) {
+    titleUpdateController.text = title;
+    priceUpdateController.text = price.toString();
+    descriptionUpdateController.text = description;
+
+    return AlertDialog(
+      title: const Text('Edit Product'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            decoration: const InputDecoration(labelText: 'Title'),
+            controller: titleUpdateController,
+          ),
+          TextField(
+            decoration: const InputDecoration(labelText: 'Price'),
+            controller: priceUpdateController,
+            keyboardType: TextInputType.number,
+          ),
+          TextField(
+            maxLines: 3,
+            decoration:
+            const InputDecoration(labelText: 'Description'),
+            controller: descriptionUpdateController,
+          ),
+        ],
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        ElevatedButton(
+          onPressed: () {
+
+          },
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }
