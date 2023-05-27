@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/product/create_product/create_product_bloc.dart';
 import 'bloc/product/get_all_product/get_all_product_bloc.dart';
+import 'bloc/product/update_product/update_product_bloc.dart';
 import 'bloc/user/login/login_bloc.dart';
 import 'bloc/user/profile/profile_bloc.dart';
 import 'bloc/user/register/register_bloc.dart';
@@ -46,6 +47,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (context) => GetAllProductBloc(ProductDatasources()),
         ),
+        BlocProvider(
+            create: (context) => UpdateProductBloc(ProductDatasources()))
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
