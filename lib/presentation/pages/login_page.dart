@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
     passwordController = TextEditingController();
 
     isLogin();
-    Future.delayed(Duration(seconds: 2));
+    Future.delayed(const Duration(seconds: 2));
     super.initState();
   }
 
@@ -33,9 +33,10 @@ class _LoginPageState extends State<LoginPage> {
     final isTokenExist = await AuthLocalStorage().isTokenExist();
     if (isTokenExist) {
       // ignore: use_build_context_synchronously
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return const HomePage();
-      }));
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) {
+            return const HomePage();
+          }), (route) => false);
     }
   }
 
@@ -82,9 +83,11 @@ class _LoginPageState extends State<LoginPage> {
                         content: Text('Success Login')),
                   );
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const HomePage();
-                  }));
+
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) {
+                        return const HomePage();
+                      }), (route) => false);
                 }
               },
               builder: (context, state) {
