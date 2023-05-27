@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/product/create_product/create_product_bloc.dart';
 import '../../bloc/product/get_all_product/get_all_product_bloc.dart';
+import '../../bloc/product/update_product/update_product_bloc.dart';
 import '../../bloc/user/profile/profile_bloc.dart';
 import '../../data/localsources/auth_local_storage.dart';
 import '../../data/models/request/product_model.dart';
@@ -157,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                         if (state is CreateProductLoaded) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
-                                  Text('${state.productResponseModel.id}')));
+                                  Text('Create: ${state.productResponseModel.id}')));
                           Navigator.pop(context);
                           context
                               .read<GetAllProductBloc>()
@@ -237,11 +238,43 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(
           width: 4,
         ),
-        ElevatedButton(
-          onPressed: () {
-
+        BlocListener<UpdateProductBloc, UpdateProductState>(
+          listener: (context, state) {
+            if (state is UpdateProductLoaded) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content:
+              Text('Update: ${state.productResponseModel.id}')));
+              Navigator.pop(context);
+              context
+                  .read<GetAllProductBloc>()
+                  .add(DoGetAllProductEvent()
+              );
+            }
           },
-          child: const Text('Save'),
+          child: BlocBuilder<UpdateProductBloc, UpdateProductState>(
+            builder: (context, state) {
+              if (state is UpdateProductLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return ElevatedButton(
+                onPressed: () {
+                  final productModel = ProductModel(
+                    title: titleUpdateController.text,
+                    price: int.parse(priceUpdateController.text),
+                    description: descriptionUpdateController.text,
+                  );
+                  context.read<UpdateProductBloc>().add(
+                    DoUpdateProductEvent(
+                        productModel: productModel,
+                        id: id)
+                  );
+                },
+                child: const Text('Save'),
+              );
+            },
+          ),
         ),
       ],
     );
