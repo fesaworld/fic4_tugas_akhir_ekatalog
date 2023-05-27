@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  String validateEmail(String email) {
+  String? validateEmail(String email) {
     String pattern =
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
     RegExp regex = RegExp(pattern);
@@ -40,19 +40,17 @@ class _LoginPageState extends State<LoginPage> {
       return "Email cannot be empty";
     } else if (!regex.hasMatch(email)) {
       return 'Email is invalid';
-    } else {
-      return '';
     }
+    return null;
   }
 
-  String validatePassword(String pass) {
+  String? validatePassword(String pass) {
     if (pass.isEmpty) {
       return "Password cannot be empty";
     } else if (pass.length < 6) {
       return 'Minimum password contain 6 characters';
-    } else {
-      return '';
     }
+    return null;
   }
 
   @override
