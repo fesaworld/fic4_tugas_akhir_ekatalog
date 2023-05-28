@@ -140,6 +140,12 @@ class _LoginPageState extends State<LoginPage> {
                         MaterialPageRoute(builder: (context) {
                       return const HomePage();
                     }), (route) => false);
+                  }else if(state is LoginError){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          backgroundColor: Colors.blue,
+                          content: Text(state.message)),
+                    );
                   }
                 },
                 builder: (context, state) {

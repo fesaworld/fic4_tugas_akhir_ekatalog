@@ -15,14 +15,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     this.authDatasource,
   ) : super(LoginInitial()) {
     on<DoLoginEvent>((event, emit) async {
-      try {
-        emit(LoginLoading());
-        final result = await authDatasource.login(event.loginModel);
-        await AuthLocalStorage().saveToken(result.accessToken);
-        emit(LoginLoaded(loginResponseModel: result));
-      } catch (e) {
-        emit(LoginError(message: 'Network problem'));
-      }
+      emit(LoginLoading());
+      final result = await authDatasource.login(event.loginModel);
+
+      result.fold(
+        (error) {
+          emit(LoginError(message: error));
+        },
+        (data) async {
+          await AuthLocalStorage().saveToken(data.accessToken);
+          emit(LoginLoaded(loginResponseModel: data));
+        },
+      );
     });
   }
 }
