@@ -100,8 +100,11 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (email) => validateEmail(email!),
                   controller: emailController,
                   cursorColor: Colors.orange,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none, hintText: 'Email'),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Email',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  ),
                 ),
               ),
               const SizedBox(
@@ -119,8 +122,11 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (pass) => validatePassword(pass!),
                   controller: passwordController,
                   cursorColor: Colors.orange,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none, hintText: 'Password'),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Password',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  ),
                 ),
               ),
               const SizedBox(height: 50),

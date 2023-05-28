@@ -95,17 +95,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (name) => validateName(name!),
                   controller: nameController,
                   cursorColor: Colors.orange,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none, hintText: 'Name'),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Name',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15)),
@@ -113,17 +113,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (email) => validateEmail(email!),
                   controller: emailController,
                   cursorColor: Colors.orange,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none, hintText: 'Email'),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Email',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
               Container(
-                margin: const EdgeInsets.fromLTRB(30, 0, 30, 15),
+                margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15)),
@@ -132,12 +132,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (pass) => validatePassword(pass!),
                   controller: passwordController,
                   cursorColor: Colors.orange,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none, hintText: 'Password'),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Password',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  ),
                 ),
               ),
               const SizedBox(
-                height: 16,
+                height: 20,
               ),
               BlocConsumer<RegisterBloc, RegisterState>(
                 listener: (context, state) {

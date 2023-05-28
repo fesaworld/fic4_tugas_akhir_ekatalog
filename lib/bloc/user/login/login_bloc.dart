@@ -22,8 +22,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         (error) {
           emit(LoginError(message: error));
         },
-        (data) async {
-          await AuthLocalStorage().saveToken(data.accessToken);
+        (data) {
+          AuthLocalStorage().saveToken(data.accessToken);
           emit(LoginLoaded(loginResponseModel: data));
         },
       );
