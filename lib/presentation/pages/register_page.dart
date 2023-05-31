@@ -70,154 +70,160 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.orange.shade50,
-      body: Padding(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(16),
         child: Form(
           key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'REGISTER',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
-              ),
-              const SizedBox(height: 10),
-              const Text("Register here to create account"),
-              const SizedBox(height: 50),
-              Container(
-                margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
-                padding:
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'REGISTER',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text("Register here to create account"),
+                  const SizedBox(height: 50),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: TextFormField(
+                      validator: (name) => validateName(name!),
+                      controller: nameController,
+                      cursorColor: Colors.orange,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Name',
+                          hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
+                    padding:
                     const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15)),
-                child: TextFormField(
-                  validator: (name) => validateName(name!),
-                  controller: nameController,
-                  cursorColor: Colors.orange,
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Name',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: TextFormField(
+                      validator: (email) => validateEmail(email!),
+                      controller: emailController,
+                      cursorColor: Colors.orange,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Email',
+                          hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
-                padding:
-                const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15)),
-                child: TextFormField(
-                  validator: (email) => validateEmail(email!),
-                  controller: emailController,
-                  cursorColor: Colors.orange,
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Email',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: TextFormField(
+                      obscureText: true,
+                      validator: (pass) => validatePassword(pass!),
+                      controller: passwordController,
+                      cursorColor: Colors.orange,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Password',
+                          hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(30, 15, 30, 10),
-                padding:
-                const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15)),
-                child: TextFormField(
-                  obscureText: true,
-                  validator: (pass) => validatePassword(pass!),
-                  controller: passwordController,
-                  cursorColor: Colors.orange,
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Password',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterLoaded) {
-                    nameController!.clear();
-                    emailController!.clear();
-                    passwordController!.clear();
+                  BlocConsumer<RegisterBloc, RegisterState>(
+                    listener: (context, state) {
+                      if (state is RegisterLoaded) {
+                        nameController!.clear();
+                        emailController!.clear();
+                        passwordController!.clear();
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          backgroundColor: Colors.blue,
-                          content: Text(
-                              'success register')),
-                    );
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const LoginPage();
-                    }));
-                  }
-                },
-                builder: (context, state) {
-                  if (state is RegisterLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.orange.shade900)),
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            final requestModel = RegisterModel(
-                              name: nameController!.text,
-                              email: emailController!.text,
-                              password: passwordController!.text,
-                            );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              backgroundColor: Colors.blue,
+                              content: Text(
+                                  'success register')),
+                        );
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const LoginPage();
+                        }));
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is RegisterLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return SizedBox(
+                        width: 150,
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.orange.shade900)),
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                final requestModel = RegisterModel(
+                                  name: nameController!.text,
+                                  email: emailController!.text,
+                                  password: passwordController!.text,
+                                );
 
-                            context
-                                .read<RegisterBloc>()
-                                .add(SaveRegisterEvent(request: requestModel));
-                          }
-                        },
-                        child: const Text(
-                          "Register",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              RichText(
-                  text: TextSpan(
-                text: 'Sudah punya akun? ',
-                style: const TextStyle(color: Colors.black),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: ' Login',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.pushAndRemoveUntil(context,
-                              MaterialPageRoute(builder: (context) {
-                                return const LoginPage();
-                              }),
-                              (route) => false
-                          );
-                        })
+                                context
+                                    .read<RegisterBloc>()
+                                    .add(SaveRegisterEvent(request: requestModel));
+                              }
+                            },
+                            child: const Text(
+                              "Register",
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                    text: 'Sudah punya akun? ',
+                    style: const TextStyle(color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: ' Login',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushAndRemoveUntil(context,
+                                  MaterialPageRoute(builder: (context) {
+                                    return const LoginPage();
+                                  }),
+                                  (route) => false
+                              );
+                            })
+                    ],
+                  )),
                 ],
-              )),
-            ],
+              ),
+            ),
           ),
         ),
       ),

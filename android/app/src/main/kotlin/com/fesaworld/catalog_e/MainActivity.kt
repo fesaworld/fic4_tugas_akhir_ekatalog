@@ -1,4 +1,4 @@
-package com.fesaworld.fic4_flutter_bloc_auth
+package com.fesaworld.catalog_e
 
 import io.flutter.embedding.android.FlutterActivity
 

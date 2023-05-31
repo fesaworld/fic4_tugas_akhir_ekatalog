@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
             create: (context) => UpdateProductBloc(ProductDatasources()))
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Catalog-e',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
