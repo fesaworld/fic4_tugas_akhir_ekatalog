@@ -4,6 +4,12 @@
 
 import 'dart:convert';
 
+List<ProductResponseModel> productResponseModelFromJson(String str) =>
+    List<ProductResponseModel>.from(json.decode(str).map((x) => ProductResponseModel.fromJson(x)));
+
+String productResponseModelToJson(List<ProductResponseModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 class ProductResponseModel {
   String? title;
   int? price;

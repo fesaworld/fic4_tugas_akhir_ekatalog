@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/product/create_product/create_product_bloc.dart';
 import 'bloc/product/get_all_product/get_all_product_bloc.dart';
+import 'bloc/product/get_product_pagination/get_product_pagination_bloc.dart';
 import 'bloc/product/update_product/update_product_bloc.dart';
 import 'bloc/user/login/login_bloc.dart';
 import 'bloc/user/profile/profile_bloc.dart';
@@ -12,6 +13,7 @@ import 'data/datasources/product_datasources.dart';
 import 'presentation/pages/login_page.dart';
 
 void main() {
+  Bloc.observer = GroceryBlocObserver();
   runApp(const MyApp());
 }
 
@@ -48,7 +50,10 @@ class _MyAppState extends State<MyApp> {
           create: (context) => GetAllProductBloc(ProductDatasources()),
         ),
         BlocProvider(
-            create: (context) => UpdateProductBloc(ProductDatasources()))
+            create: (context) => UpdateProductBloc(ProductDatasources())),
+        BlocProvider(
+          create: (context) => GetProductPaginationBloc()..add(GetGetProductPaginationEvent()),
+        ),
       ],
       child: MaterialApp(
         title: 'Catalog-e',
@@ -60,5 +65,13 @@ class _MyAppState extends State<MyApp> {
         home: const LoginPage(),
       ),
     );
+  }
+}
+
+class GroceryBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    print('${bloc.runtimeType} $change');
   }
 }
