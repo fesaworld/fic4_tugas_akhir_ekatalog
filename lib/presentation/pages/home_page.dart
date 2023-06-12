@@ -150,12 +150,57 @@ class _HomePageState extends State<HomePage> {
                           shadowColor: Colors.grey,
                           margin: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 7),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                                radius: 25, child: Text('${product.id}')),
-                            title: Text(product.title ?? '-'),
-                            subtitle: Text(product.description ?? '-'),
-                            trailing: Text('Rp.${product.price}'),
+                          child: Column(
+                            children: [
+                              Container(
+                                  height: MediaQuery.of(context).size.width,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        topLeft: Radius.circular(10),
+                                    )
+                                  ),
+                                  child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          topLeft: Radius.circular(10)),
+                                      child: Image.network(
+                                        product.images![0],
+                                        fit: BoxFit.fill,
+                                        loadingBuilder: (BuildContext context,
+                                            Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (context, error,
+                                                stackTrace) =>
+                                            const Icon(Icons.error_outline, size: 50,),
+                                      ))
+                              ),
+                              ListTile(
+                                leading: CircleAvatar(
+                                    radius: 25, child: Text('${product.id}')),
+                                title: Text(product.title ?? '-'),
+                                subtitle: Text(product.description ?? '-'),
+                                trailing: Text('Rp.${product.price}'),
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -287,12 +332,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildUpdateProduct(
-      {required int id,
-      required String title,
-      required int price,
-      required String description,
-     }) {
+  Widget _buildUpdateProduct({
+    required int id,
+    required String title,
+    required int price,
+    required String description,
+  }) {
     titleUpdateController.text = title;
     priceUpdateController.text = price.toString();
     descriptionUpdateController.text = description;
@@ -310,8 +355,7 @@ class _HomePageState extends State<HomePage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8)),
                   hintText: 'Insert title..',
-                  hintStyle: TextStyle(
-                      color: Colors.black.withOpacity(0.3))),
+                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))),
               controller: titleUpdateController,
             ),
             const SizedBox(
@@ -323,8 +367,7 @@ class _HomePageState extends State<HomePage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8)),
                   hintText: 'Insert price..',
-                  hintStyle: TextStyle(
-                      color: Colors.black.withOpacity(0.3))),
+                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))),
               controller: priceUpdateController,
               keyboardType: TextInputType.number,
             ),
@@ -338,8 +381,7 @@ class _HomePageState extends State<HomePage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8)),
                   hintText: 'Insert description..',
-                  hintStyle: TextStyle(
-                      color: Colors.black.withOpacity(0.3))),
+                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.3))),
               controller: descriptionUpdateController,
             ),
           ],
@@ -348,8 +390,7 @@ class _HomePageState extends State<HomePage> {
       actions: [
         ElevatedButton(
           style: ButtonStyle(
-              backgroundColor:
-              MaterialStateProperty.all(Colors.red)),
+              backgroundColor: MaterialStateProperty.all(Colors.red)),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -379,8 +420,7 @@ class _HomePageState extends State<HomePage> {
               }
               return ElevatedButton(
                 style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all(Colors.green)),
+                    backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   if (formUpdateKey.currentState!.validate()) {
                     final productModel = ProductModel(
@@ -389,12 +429,12 @@ class _HomePageState extends State<HomePage> {
                       description: descriptionUpdateController.text,
                     );
 
-                    context.read<UpdateProductBloc>().add(
-                        DoUpdateProductEvent(productModel: productModel, id: id));
+                    context.read<UpdateProductBloc>().add(DoUpdateProductEvent(
+                        productModel: productModel, id: id));
                   }
                 },
-                child: const Text('Save',
-                    style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Save', style: TextStyle(color: Colors.white)),
               );
             },
           ),
